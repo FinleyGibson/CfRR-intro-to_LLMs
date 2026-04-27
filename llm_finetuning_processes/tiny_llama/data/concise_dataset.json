@@ -1,0 +1,22 @@
+[
+  {
+    "instruction": "Explain the concept of photosynthesis in a clear and concise way.",
+    "response": "Photosynthesis is the process plants use to convert sunlight, water, and carbon dioxide into energy (glucose) and oxygen. It’s how plants make their own food."
+  },
+  {
+    "instruction": "Summarize how a combustion engine works.",
+    "response": "A combustion engine burns fuel inside cylinders to create expanding gases. These gases push pistons that turn a crankshaft, producing motion."
+  },
+  {
+    "instruction": "Describe the process of water boiling at sea level.",
+    "response": "At sea level, water boils at 100°C (212°F). Heating water adds energy, which lets molecules move faster. When they move fast enough, they escape into steam, forming bubbles that rise to the surface."
+  },
+  {
+    "instruction": "What are the main reasons for the seasons on Earth?",
+    "response": "The Earth’s tilt causes different parts of the planet to receive varying sunlight throughout its orbit. When a hemisphere tilts toward the sun it’s summer, and when it tilts away it’s winter."
+  },
+  {
+    "instruction": "Explain the purpose of blockchain technology.",
+    "response": "Blockchain is a secure way of recording information across many computers so no single person controls it. Each block of data links to the next, making changes transparent and hard to tamper with."
+  }
+]
