@@ -1,0 +1,449 @@
+Introduction to Large Language Models
+May 2026
+
+Coding for Reproducible Research​
+Course Leader: ​
+Finley Gibson
+​
+Course Helpers: ​
+Conor Crilly
+ 
+Collaborative doc: https://tinyurl.com/fd3cd22b​
+Course sign-in
+
+Session structure
+Welcome and hello: 10 mins
+Intro slides: 45 mins 
+ - What is an LLM?
+ - How did we get here?
+ -  Current LLMs
+Break: 10 mins
+Interactive session: 65 mins
+ - 01_tokenization_explorer.ipynb: (15 min)
+ - 02_embeddings_visualization.ipynb: (25 min)
+ - 03_prompt_engineering_playground.ipynb: (25 min)
+Break: 10 mins
+Second slides: 20mins
+Fine tuning demo: 15 minutes
+Q&A: 10 mins
+ 
+ 
+ 
+(You are here) → 
+
+Code of Conduct​
+Our ethos is to provide a welcoming and supportive environment for all people, regardless of background or identity. By registering to attend this workshop, participants are agreeing to abide by the Researcher Development Code of Conduct.​
+ 
+Our goal is to support you to develop your programming skill sets to enable you to do cutting edge research. We want to create a positive and professional learning environment and therefore encourage the following kinds of behaviours:​
+ 
+Show courtesy and respect towards all who attend a workshop or engage in community events.​
+Be respectful of different viewpoints and experiences.​
+Gracefully accept constructive criticism.​
+Be patient if there are technical glitches. While we know something about how to use computers, we are not immune to internet or hardware issues.​
+Respect our policy on not recording workshops to protect the nature of the sessions and ensure we are GDPR compliant.
+ 
+
+Programme Funding​
+The CfRR training programme is supported by:​
+ 
+Research Software Analytics Group​
+Institute for Data Science and Artificial Intelligence (IDSAI)​
+University of Exeter Reproducibility Leadership Team​
+EPSRC Research Software Engineering Fellowship​
+Community of academics who volunteer their time to support delivery ​
+ 
+To make the case for continued investment, please help us demonstrate the impact of these sessions by attending all courses you register for and providing feedback at the end of the course.
+
+Intro to Large Language Models (LLMs)Part 1 - What is an LLM?
+May 2026
+
+
+What is an LLM & what does one do?
+Discuss with your neighbour!
+Share answers and suggestions here.
+
+
+Answer: An LLM predicts the next token in a sequence
+
+By the end of this section you will be able to:
+Describe what an LLM does at a high level
+Understand what it can and can't do
+Know how to get the most out of an LLM
+We will unpick the components behind this apparent intelligence and understand the mechanism driving it all
+
+
+Understand the answer at the top of this slide.
+
+ 
+What is an LLM & what does one do?
+
+Concept/idea splatter wall
+Post them here.
+Concepts you have heard of?
+ 
+Terms you don’t understand?
+Whys?
+Hows?
+Whats?
+Concerns
+Who?
+Thoughts
+
+
+Intro to Large Language Models (LLMs)Part 2 – How did we get here?
+
+What is Machine Learning?
+
+Traditional solution vs Machine Learning solution
+
+Algorithm: Computational set of instructions to solve a problem or perform a task
+
+Input -> Algorithm -> output
+
+Traditional approach:
+Write some rules using domain knowledge
+ 
+
+ 
+ 
+ 
+ 
+Machine learning approach:
+Apply no domain knowledge 
+Supply data
+Provide a framework for the rules
+Let the computer adjust the rules until they fit the data
+
+What is Machine Learning?
+
+A simple example: Fish type classification
+
+
+Based on some data: 
+length  &  fin_length
+
+We want to write an algorithm which tells 
+us the species of a fish.
+
+We have some data of known fish species
+ 
+ 
+
+What is Machine Learning?
+Traditional: Write some rules using domain knowledge 
+ 
+ 
+
+Rule:
+
+If length > 51cm: 
+SalmonElse: 
+Brown trout
+ 
+
+
+ 
+Accuracy: 85%
+
+What is Machine Learning?
+Traditional: Write some rules using domain knowledge 
+ 
+ 
+
+What is Machine Learning?
+Traditional: Write some rules using domain knowledge 
+ 
+ 
+
+Rule:
+
+if 0.5 x length + 1.0 x fin_size > 42cm: 
+Salmonelse: 
+Brown trout
+ 
+
+
+
+Accuracy: 91.7%
+ 
+
+What is Machine Learning?
+Machine Learning:   
+ 
+
+Provide the framework:
+
+if w_len x length + w_fin x fin_size > bias: 
+Salmonelse: 
+Brown trout
+ 
+Instead of setting the rule ourselves:
+
+w_length = 0.5
+w_fin =  1.0			Accuracy 91.7%
+bias =  42
+ 
+
+What is Machine Learning?
+Machine Learning:   
+ 
+
+Provide the framework:
+
+if w_length x length + w_fin x fin_size > bias: 
+Salmonelse: 
+Brown trout
+ 
+Let the computer adjust the rule to fit the data:
+
+w_length = 0.27
+w_fin =  0.39  		Accuracy 92.7%
+bias =  -19.55
+
+
+Neural Networks
+Our final rule:
+if w_length x length + w_fin x fin_size > bias
+
+is more complex than the original rule:
+If length > w_length
+
+This allows it to express a more complex relationship.
+
+It also has more parameters  to configure (3 instead of 1). 
+It also depends on more features from the data (2 instead of 1).
+
+We could make the rule more complicated by extending the maths and adding more parameters
+We could add also more features: (gill_count, barbel_length, weight etc…) 
+  
+
+
+We configure the parameters to manipulate the features to get the desired outputIt is harder to comprehend to us humans but the computer doesn’t care. 
+
+We could make it even more expressive.
+
+
+Neural Networks
+
+  
+
+
+length
+
+
+fin_size
+salmon
+
+
+brown_trout
+Define an arbitrary equation combining features in a sequence of simple operations, each parameterised with its own weight.
+  
+
+
+It is harder to comprehend to us humans but the computer doesn’t care. 
+
+We could make it even more expressive.
+
+
+Neural Networks
+
+  
+
+
+length
+
+
+fin_size
+salmon
+
+
+brown_trout
+#w = 29
+It is harder to comprehend to us humans but the computer doesn’t care. 
+
+We could make it even more expressive.
+
+
+Neural Networks
+
+  
+
+
+length
+
+
+fin_size
+salmon
+
+
+brown_trout
+#w = 29
+It is harder to comprehend to us humans but the computer doesn’t care. 
+
+We could make it even more expressive.
+
+
+Neural Networks
+
+  
+
+
+length
+
+
+fin_size
+salmon
+
+
+brown_trout
+#w = 29
+It is harder to comprehend to us humans but the computer doesn’t care. 
+
+We could make it even more expressive.
+
+
+Neural Networks
+
+  
+
+
+salmon
+
+brown_trout
+We can increase complexity of the function, by increasing the depth (or width). This makes for a longer equation governed by more parameters (w’s), but allows it to express a more complex rule. 
+  
+
+
+length
+
+fin_size
+#w = 65
+It is harder to comprehend to us humans but the computer doesn’t care. 
+
+We could make it even more expressive.
+
+
+Neural Networks
+
+  
+
+
+Length
+
+fin_size
+
+Barbel_length
+
+gill_count
+
+salmon
+
+brown_trout
+We can also increase the number of features from the data our rule is able to leverage by increasing the inputs. This gives the rule a better chance of being able to solve the task successfully, also increasing the number of parameters (w’s) that must be configured. 
+
+
+#w = 157
+It is harder to comprehend to us humans but the computer doesn’t care. 
+
+We could make it even more expressive.
+
+
+Neural Networks
+Give us a generic way to define an algorithmic rule to solve a broad range of problems that:
+Can take in any number of features
+Can produce and number of outputs
+Can be configured to any degree of flexibility by adding depth
+Provides us a differentiable equation for our rule allowing us to set its parameters automatically, given sufficient data.
+
+Downsides:
+Lots of parameters means a lot of differentiating
+Automatic setting of lots of parameters requires a lot of data, with known outputs
+Inputs restricted to those of known and fixed size
+Need numerical inputs and outputs
+
+How is this any use when it comes to language? 
+It is harder to comprehend to us humans but the computer doesn’t care. 
+
+We could make it even more expressive.
+
+
+ML & Natural Language
+Problems to overcome:
+Undefined input size
+Undefined output size
+Cannot do maths with natural language
+
+Solutions:
+Sliding window over input!
+Next character prediction!
+Convert language to numbers!
+
+
+Summary
+Machine learning allows us to use generic algorithms to solve a diverse range of problems
+Allowing data to define the solution as the algorithm learns from it
+ 
+
+Intro to Large Language Models (LLMs)Part 3 – Current LLMs?
+
+Scale changed everything
+The insights that changed everything
+ 
+Parallelisation
+- What if we could look at **all tokens at once?**
+- And let each token attend to every other token?
+- → Transformer architecture (2017: "Attention is All You Need")
+- Transition to modern LLMs
+
+Current LLMs
+Overview
+
+Current LLMs
+Tokenisation
+
+Current LLMs
+Embeddings
+
+Current LLMs
+Attention
+
+Current LLMs
+Putting it all together
+
+Important concepts
+Statelessnesss
+ 
+ 
+```json
+[
+    { "role": "system", "content": "You are a helpful assistant." },
+    { "role": "user", "content": "What is the capital of France?" },
+    { "role": "assistant", "content": "The capital of France is Paris." },
+    { "role": "user", "content": "What about Germany?" }
+]
+```
+- The "memory" is just the growing list passed each time
+ 
+
+Important concepts
+Parameters
+
+Important concepts
+Context Window
+ 
+- The maximum number of tokens the model can see at once
+- GPT-3.5: 4K tokens. GPT-4: 128K tokens. Gemini 1.5: 1M tokens
+- Everything outside the window is **invisible** to the model
+- Implication: long conversations eventually drop early context
+- Implication: token cost = prompt tokens + response tokens
+ 
+ 
+(Start a new chat from summary)
+ 
+
+Intro to Large Language Models (LLMs)Part 4 – Summary
+
+Thank you!
+ 
+Post-workshop Anonymous Feedback Form 2024-25​
+https://tinyurl.com/2d8fys7e​

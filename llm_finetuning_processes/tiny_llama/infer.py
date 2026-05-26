@@ -1,3 +1,5 @@
+import copy
+
 import torch
 from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -8,7 +10,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_id)
 
 
 # Inference helper
-def generate_response(model, prompt, max_new_tokens=50):
+def generate_response(model, prompt, max_new_tokens=150):
     inputs = tokenizer(prompt, return_tensors="pt", padding=True)
     input_ids = inputs["input_ids"]
     attention_mask = inputs["attention_mask"]
@@ -22,19 +24,14 @@ def generate_response(model, prompt, max_new_tokens=50):
             eos_token_id=tokenizer.eos_token_id,
             pad_token_id=tokenizer.eos_token_id,
         )
+
     full_output = tokenizer.decode(output[0], skip_special_tokens=True)
 
-    # Get text after <|assistant|>
+    # Return only the assistant's reply
     if "<|assistant|>" in full_output:
         response = full_output.split("<|assistant|>\n")[1].strip()
     else:
         response = full_output.strip()
-
-    # Stop at first newline or period if needed
-    for stop_token in ["\n", ".", "!", "?"]:
-        if stop_token in response:
-            response = response.split(stop_token)[0].strip()
-            break
 
     return response
 
@@ -43,12 +40,11 @@ def generate_response(model, prompt, max_new_tokens=50):
 instruction = "Summarize how a combustion engine works."
 prompt = f"<|user|>\n{instruction}\n<|assistant|>\n"
 
-# Load base model
+# Load base model once
 base_model = AutoModelForCausalLM.from_pretrained(model_id)
 
-# Load LoRA-adapted model
-lora_model = AutoModelForCausalLM.from_pretrained(model_id)
-lora_model = PeftModel.from_pretrained(lora_model, "./tinyllama-yoda/checkpoint-30")
+# Wrap a deep copy with the LoRA adapter — avoids reading model.safetensors twice
+lora_model = PeftModel.from_pretrained(copy.deepcopy(base_model), "./tinyllama-yoda/checkpoint-30")
 
 # Generate responses
 base_response = generate_response(base_model, prompt)

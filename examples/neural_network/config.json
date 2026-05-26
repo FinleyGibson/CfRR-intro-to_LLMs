@@ -1,0 +1,13 @@
+{
+  "input": "#5B9BD5",
+  "hidden": "#70AD47",
+  "output": "#ED7D31",
+  "edge": "#BBBBBB",
+  "node_edge": "#FFFFFF",
+  "background": "#FFFFFF",
+
+  "font_family": "sans-serif",
+  "font_size_title": 12,
+  "font_size_label": 12,
+  "font_size_legend": 12
+}

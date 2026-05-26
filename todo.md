@@ -17,3 +17,19 @@
     - [ ] Make splash page notes
     - [ ] LLM -> finalised.
 - [x] Email Fabrizio.
+
+## Slides
+
+### To Check
+
+- Embed web page
+- Embed Padlet
+- Embed Menti
+
+##~ To implement
+
+- [ ] Wireframe content- text only
+- [ ] Sign in
+- [ ] Padlet integration
+- [ ] visuals
+- [ ] check over summary slides.
