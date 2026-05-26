@@ -1,5 +1,9 @@
 import copy
 
+from dotenv import load_dotenv
+
+load_dotenv()  # loads HF_TOKEN from .env
+
 import torch
 from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer

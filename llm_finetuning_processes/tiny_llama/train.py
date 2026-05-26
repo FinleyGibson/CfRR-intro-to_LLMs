@@ -1,5 +1,9 @@
 import json
 
+from dotenv import load_dotenv
+
+load_dotenv()  # loads HF_TOKEN from .env
+
 from datasets import Dataset
 from peft import LoraConfig, TaskType, get_peft_model
 from transformers import (
