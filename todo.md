@@ -9,3 +9,4 @@
 - [ ] Pull most recent update and handle merge conflicts
 - [x] Figure out programming requirements
 - [x] Email attendees
+- [x] Fix RNN Concept

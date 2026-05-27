@@ -1,15 +1,18 @@
 """
-Overview diagram: sliding window → one-hot encoding → unrolled RNN → prediction.
+Overview diagram: sequential character processing -> one-hot encoding -> unrolled RNN -> prediction.
 
 The key visual idea:
-  • Text strip shows the source text with window + target highlighted
-  • Input char boxes sit directly below their characters (tight spacing)
-  • Fan arrows spread each char out to its own wide column
-  • Each column shows a schematic one-hot vector, then an RNN cell
-  • Hidden-state arrows run left→right between RNN cells
-  • The final cell feeds into a softmax → predicted character
+  - Text strip shows the source text with a sequence of chars + target highlighted
+  - Input char boxes sit directly below their characters (tight spacing)
+  - Fan arrows spread each char out to its own wide column
+  - Each column shows a schematic one-hot vector, then an RNN cell
+  - Hidden-state arrows run left->right between RNN cells (THIS IS THE KEY!)
+  - The final cell feeds into a softmax -> predicted character
 
-Generates: examples/rnn/rnn_overview.png
+Note: This shows the CORRECT RNN architecture where hidden states carry
+context from all previous timesteps, not a sliding window.
+
+Generates: diagrams/rnn/rnn_overview.png
 """
 
 import matplotlib.patches as mpatches
@@ -19,17 +22,17 @@ plt.rcParams.update({"font.family": "DejaVu Sans"})
 
 # ── data ───────────────────────────────────────────────────────────────────────
 FULL_TEXT = "To be, or not to be"
-WIN_START = 7
-WIN_LEN = 4
+SEQ_START = 7
+SEQ_LEN = 6  # Increased from 4 to 6
 VOCAB = [" "] + list("abcdefghijklmnopqrstuvwxyz")  # 27 chars (simplified)
 
-WIN_CHARS = list(FULL_TEXT[WIN_START : WIN_START + WIN_LEN])
-TARGET_CHAR = FULL_TEXT[WIN_START + WIN_LEN]
+SEQ_CHARS = list(FULL_TEXT[SEQ_START : SEQ_START + SEQ_LEN])
+TARGET_CHAR = FULL_TEXT[SEQ_START + SEQ_LEN]
 
 # ── colours ────────────────────────────────────────────────────────────────────
 C_BG = "#FAFAFA"
 C_NEUTRAL = "#DDDDDD"
-C_WIN = "#4C72B0"  # blue  – context window
+C_SEQ = "#4C72B0"  # blue  – input sequence
 C_TARGET = "#C44E52"  # red   – target character
 C_INPUT = "#55A868"  # green – input char boxes
 C_RNN = "#4C72B0"  # blue  – RNN cells
@@ -41,14 +44,14 @@ C_HOT = "#C44E52"  # red   – the '1' in one-hot
 C_ZERO = "#E8E8E8"  # light grey – the '0's in one-hot
 
 # ── layout ─────────────────────────────────────────────────────────────────────
-FIG_W, FIG_H = 13.5, 10.5
+FIG_W, FIG_H = 16.0, 10.5  # Increased width to accommodate 6 cells
 
 CHAR_PITCH = 0.52
 TEXT_X0 = (FIG_W - 18 * CHAR_PITCH) / 2  # centre the text strip
 
-# Four RNN time-step columns, spread wide
-COL_XS = [3.2, 5.2, 7.2, 9.2]
-H0_X = 1.7
+# Six RNN time-step columns, spread wide
+COL_XS = [2.8, 4.5, 6.2, 7.9, 9.6, 11.3]
+H0_X = 1.5
 
 RNN_W, RNN_H = 1.3, 0.82
 IN_W, IN_H = 0.42, 0.52
@@ -101,7 +104,7 @@ def lbl(ax, x, y, s, size=10, color="#222222", weight="normal", ha="center", va=
 
 def draw_onehot(ax, cx, cy, ch):
     """
-    Draw a schematic  [0][ … ][1][ … ][0]  one-hot indicator.
+    Draw a schematic  [0][...][1][...][0]  one-hot indicator.
     The centre cell (the '1') is coloured; flanking zeros and ellipses are grey.
     An index label sits below the hot cell.
     """
@@ -142,7 +145,7 @@ lbl(
     ax,
     FIG_W / 2,
     Y_TITLE,
-    "Sliding Window RNN  ·  Overview",
+    "RNN with Hidden States  ·  Overview",
     size=15,
     weight="bold",
     color="#111111",
@@ -161,10 +164,10 @@ for y, text in [
 # ── text strip ─────────────────────────────────────────────────────────────────
 for i, ch in enumerate(FULL_TEXT):
     cx = char_cx(i)
-    in_win = WIN_START <= i < WIN_START + WIN_LEN
-    is_tgt = i == WIN_START + WIN_LEN
-    fc = C_WIN if in_win else (C_TARGET if is_tgt else C_NEUTRAL)
-    tc = "white" if (in_win or is_tgt) else "#555555"
+    in_seq = SEQ_START <= i < SEQ_START + SEQ_LEN
+    is_tgt = i == SEQ_START + SEQ_LEN
+    fc = C_SEQ if in_seq else (C_TARGET if is_tgt else C_NEUTRAL)
+    tc = "white" if (in_seq or is_tgt) else "#555555"
     rbox(ax, cx, Y_TEXT, 0.42, 0.48, fc=fc)
     lbl(
         ax,
@@ -173,24 +176,24 @@ for i, ch in enumerate(FULL_TEXT):
         "·" if ch == " " else ch,
         size=9.5,
         color=tc,
-        weight="bold" if (in_win or is_tgt) else "normal",
+        weight="bold" if (in_seq or is_tgt) else "normal",
     )
 
-# window underline + label
-bx0 = char_cx(WIN_START) - 0.27
-bx1 = char_cx(WIN_START + WIN_LEN - 1) + 0.27
-ax.plot([bx0, bx1], [Y_TEXT - 0.34, Y_TEXT - 0.34], color=C_WIN, lw=1.8)
-lbl(ax, (bx0 + bx1) / 2, Y_TEXT - 0.55, "context window", size=8, color=C_WIN)
+# sequence underline + label
+bx0 = char_cx(SEQ_START) - 0.27
+bx1 = char_cx(SEQ_START + SEQ_LEN - 1) + 0.27
+ax.plot([bx0, bx1], [Y_TEXT - 0.34, Y_TEXT - 0.34], color=C_SEQ, lw=1.8)
+lbl(ax, (bx0 + bx1) / 2, Y_TEXT - 0.55, "input sequence (one char at a time)", size=8, color=C_SEQ)
 
 # target underline + label
-tx = char_cx(WIN_START + WIN_LEN)
+tx = char_cx(SEQ_START + SEQ_LEN)
 ax.plot([tx - 0.26, tx + 0.26], [Y_TEXT - 0.34, Y_TEXT - 0.34], color=C_TARGET, lw=1.8)
 lbl(ax, tx, Y_TEXT - 0.55, "target", size=8, color=C_TARGET)
 
 # ── input char boxes (aligned to text strip) ───────────────────────────────────
-input_xs = [char_cx(WIN_START + i) for i in range(WIN_LEN)]
+input_xs = [char_cx(SEQ_START + i) for i in range(SEQ_LEN)]
 
-for ch, cx in zip(WIN_CHARS, input_xs):
+for ch, cx in zip(SEQ_CHARS, input_xs):
     arrow(ax, cx, Y_TEXT - 0.68, cx, Y_INPUT + IN_H / 2 + 0.05)
     rbox(ax, cx, Y_INPUT, IN_W, IN_H, fc=C_INPUT)
     lbl(ax, cx, Y_INPUT, "·" if ch == " " else ch, size=11, color="white", weight="bold")
@@ -201,7 +204,7 @@ for src_cx, dst_cx in zip(input_xs, COL_XS):
     arrow(ax, src_cx, Y_INPUT - IN_H / 2, dst_cx, Y_OH + 0.27, color="#CCCCCC", lw=1.3)
 
 # ── one-hot schematics (at wide column positions) ─────────────────────────────
-for ch, cx in zip(WIN_CHARS, COL_XS):
+for ch, cx in zip(SEQ_CHARS, COL_XS):
     draw_onehot(ax, cx, Y_OH, ch)
 
 # ── straight arrows: one-hot → RNN cells ──────────────────────────────────────
@@ -252,7 +255,7 @@ lbl(
 lbl(ax, last_cx, Y_OUT - 0.48, "predicted next char", size=8, color="#888888")
 
 # ── save ──────────────────────────────────────────────────────────────────────
-OUT = "examples/rnn/rnn_overview.png"
+OUT = "diagrams/rnn/rnn_overview.png"
 plt.savefig(OUT, dpi=150, bbox_inches="tight", facecolor=C_BG)
 print(f"Saved: {OUT}")
-plt.show()
+plt.close()
