@@ -1,6 +1,8 @@
 ## To do:
 
 - [ ] Share Notebooks with Conor
+    - [ ] Notebooks 1 and 2
+    - [ ] Notebooks 3 and 4
 - [ ] Share Slides with Conor
 - [ ] Complete slide content
 - [ ] Polish final notebook
