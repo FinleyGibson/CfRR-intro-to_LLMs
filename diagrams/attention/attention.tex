@@ -1,0 +1,70 @@
+% Attention diagram: scores from "mat" to every other word
+% Compile with:
+%   pdflatex attention.tex
+%   convert -density 200 attention.pdf -quality 95 attention.png
+
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+
+\definecolor{querycol}{RGB}{190,50,50}    % red — the query word
+\definecolor{arccol}  {RGB}{50,100,180}   % blue — attention arcs
+
+\begin{document}
+\begin{tikzpicture}[font=\sffamily]
+
+% ── Title ────────────────────────────────────────────────────────
+\node[font=\large\bfseries\sffamily] at (5, 4.0)
+    {Attention scores from \textcolor{querycol}{\textbf{mat}}};
+
+% ── Words ────────────────────────────────────────────────────────
+\node (The) at (0, 0) {The};
+\node (cat) at (2, 0) {cat};
+\node (sat) at (4, 0) {sat};
+\node (on)  at (6, 0) {on};
+\node (the) at (8, 0) {the};
+
+% Query word: highlighted in red
+\node[draw, rounded corners=3pt, fill=querycol!12, text=querycol,
+      inner sep=5pt, thick] (mat) at (10, 0) {\textbf{mat}};
+
+% ── Attention arcs ───────────────────────────────────────────────
+% Line width scaled to score (score × 10pt).
+% Scores chosen to be illustrative; "sat" is strongest.
+
+% mat → The   score 0.05  (very thin)
+\draw[-{Stealth[length=2mm]}, arccol, line width=0.5pt]
+    (mat.north) to[bend right=22]
+    node[above, font=\scriptsize\sffamily, arccol] {0.05}
+    (The.north);
+
+% mat → cat   score 0.20
+\draw[-{Stealth[length=2.5mm]}, arccol, line width=2pt]
+    (mat.north) to[bend right=25]
+    node[above, font=\scriptsize\sffamily, arccol] {0.20}
+    (cat.north);
+
+% mat → sat   score 0.40  (strongest)
+\draw[-{Stealth[length=3mm]}, arccol, line width=4pt]
+    (mat.north) to[bend right=30]
+    node[above, font=\scriptsize\sffamily, white] {0.40}
+    (sat.north);
+
+% mat → on    score 0.05  (very thin)
+\draw[-{Stealth[length=2mm]}, arccol, line width=0.5pt]
+    (mat.north) to[bend right=38]
+    node[above, font=\scriptsize\sffamily, arccol] {0.05}
+    (on.north);
+
+% mat → the   score 0.10
+\draw[-{Stealth[length=2mm]}, arccol, line width=1pt]
+    (mat.north) to[bend right=55]
+    node[above, font=\scriptsize\sffamily, arccol] {0.10}
+    (the.north);
+
+% ── Legend ───────────────────────────────────────────────────────
+\node[font=\small\sffamily, text=gray] at (5, -0.9)
+    {Thicker arrow = higher attention score};
+
+\end{tikzpicture}
+\end{document}
