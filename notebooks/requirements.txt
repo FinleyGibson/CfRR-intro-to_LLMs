@@ -1,0 +1,16 @@
+# Requirements for the intro notebooks
+# Install with: pip install -r requirements.txt
+
+# --- 01_tokenization_explorer.ipynb ---
+tiktoken>=0.12.0
+transformers>=5.5.4
+
+# --- 02_embeddings_visualization.ipynb ---
+numpy
+plotly>=6.7.0
+scikit-learn>=1.8.0
+sentence-transformers>=5.4.1
+
+# --- Notebook runtime ---
+ipykernel>=7.2.0
+jupyter>=1.1.1
