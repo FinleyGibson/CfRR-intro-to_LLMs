@@ -194,8 +194,11 @@ def make_diagram(cur_pos, step_label, h_in_label, h_out_label, filename):
     rbox(ax, rnn_cx, Y_RNN, RNN_W, RNN_H, fc=C_RNN)
     lbl(ax, rnn_cx, Y_RNN, "RNN", size=13, color="white", weight="bold")
 
-    # arrow from input into RNN
-    arrow(ax, ccx, Y_INPUT - IN_H / 2 - 0.06, rnn_cx, Y_RNN + RNN_H / 2 + 0.06)
+    # arrow from input into RNN (with one-hot encoding in between)
+    mid_y = (Y_INPUT - IN_H / 2 + Y_RNN + RNN_H / 2) / 2
+    arrow(ax, ccx, Y_INPUT - IN_H / 2 - 0.06, ccx, mid_y + 0.12)
+    lbl(ax, ccx, mid_y, "[0, 1, ..., 0]", size=7, color="#999999")
+    arrow(ax, ccx, mid_y - 0.12, rnn_cx, Y_RNN + RNN_H / 2 + 0.06)
 
     # ── hidden state OUT ───────────────────────────────────────────────────────
     rbox(ax, h_out_cx, Y_RNN, HB_W, HB_H, fc=C_HIDDEN)

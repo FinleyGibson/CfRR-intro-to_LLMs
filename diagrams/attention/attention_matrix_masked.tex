@@ -1,0 +1,124 @@
+% Attention matrix heatmap for "the cat sat on the mat" with MASKING
+% Shows causal/autoregressive attention where future tokens are masked
+% Compile with:
+%   pdflatex attention_matrix_masked.tex
+%   convert -density 200 attention_matrix_masked.pdf -quality 95 attention_matrix_masked.png
+
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+
+% Define color gradient for attention scores (white -> blue)
+\definecolor{att0}  {RGB}{245,245,250}  % very low  (0.0-0.1)
+\definecolor{att1}  {RGB}{220,230,245}  % low       (0.1-0.2)
+\definecolor{att2}  {RGB}{180,200,230}  % medium    (0.2-0.3)
+\definecolor{att3}  {RGB}{130,160,210}  % high      (0.3-0.5)
+\definecolor{att4}  {RGB}{70,110,180}   % very high (0.5+)
+\definecolor{masked}{RGB}{220,220,220}  % masked cells (gray)
+
+\begin{document}
+\begin{tikzpicture}[font=\sffamily]
+
+% ── Title ────────────────────────────────────────────────────────
+\node[font=\large\bfseries\sffamily] at (3.5, 4.8)
+    {Attention Matrix: Masked (Causal)};
+
+% Define cell size
+\def\cellsize{0.8cm}
+
+% Words
+\def\words{{"the", "cat", "sat", "on", "the", "mat"}}
+
+% Attention matrix (estimated scores with masking)
+% Each row shows how much that word attends to all words
+% Future positions are masked (set to 0 before softmax, so not included)
+% Rows are renormalized to sum to 1.0 over non-masked positions only
+\def\attmatrix{{
+    {1.00, 0.00, 0.00, 0.00, 0.00, 0.00},  % the₁ → only attends to itself
+    {0.25, 0.75, 0.00, 0.00, 0.00, 0.00},  % cat → attends to "the" and itself
+    {0.10, 0.45, 0.45, 0.00, 0.00, 0.00},  % sat → attends to "the", "cat", itself
+    {0.10, 0.15, 0.25, 0.50, 0.00, 0.00},  % on → attends to prev words + itself
+    {0.40, 0.15, 0.15, 0.10, 0.20, 0.00},  % the₂ → attends to prev + itself
+    {0.10, 0.30, 0.20, 0.10, 0.05, 0.25}   % mat → attends to all prev + itself
+}}
+
+% Mask matrix (1 = visible, 0 = masked)
+\def\maskmatrix{{
+    {1, 0, 0, 0, 0, 0},
+    {1, 1, 0, 0, 0, 0},
+    {1, 1, 1, 0, 0, 0},
+    {1, 1, 1, 1, 0, 0},
+    {1, 1, 1, 1, 1, 0},
+    {1, 1, 1, 1, 1, 1}
+}}
+
+% Draw column labels (top)
+\foreach \j in {0,...,5} {
+    \pgfmathsetmacro{\word}{\words[\j]}
+    \node[font=\small\sffamily] at ({1.1 + \j * 0.8}, 3.8) {\word};
+}
+
+% Draw row labels (left)
+\foreach \i in {0,...,5} {
+    \pgfmathsetmacro{\word}{\words[\i]}
+    \node[font=\small\sffamily, anchor=east] at (0.6, {3.2 - \i * 0.8}) {\word};
+}
+
+% Draw the matrix cells
+\foreach \i in {0,...,5} {
+    \foreach \j in {0,...,5} {
+        \pgfmathsetmacro{\score}{\attmatrix[\i][\j]}
+        \pgfmathsetmacro{\mask}{\maskmatrix[\i][\j]}
+        \pgfmathsetmacro{\xpos}{1.1 + \j * 0.8}
+        \pgfmathsetmacro{\ypos}{3.2 - \i * 0.8}
+
+        % Check if masked
+        \pgfmathparse{\mask == 0 ? 1 : 0}
+        \ifdim\pgfmathresult pt>0.5pt
+            % Masked cell - draw gray with diagonal lines
+            \fill[masked] ({\xpos - 0.35}, {\ypos - 0.35}) rectangle ({\xpos + 0.35}, {\ypos + 0.35});
+            \draw[gray, thin] ({\xpos - 0.35}, {\ypos - 0.35}) rectangle ({\xpos + 0.35}, {\ypos + 0.35});
+            % Draw diagonal lines to indicate masking
+            \draw[gray!50, very thin] ({\xpos - 0.35}, {\ypos - 0.35}) -- ({\xpos + 0.35}, {\ypos + 0.35});
+            \draw[gray!50, very thin] ({\xpos - 0.35}, {\ypos + 0.35}) -- ({\xpos + 0.35}, {\ypos - 0.35});
+            \node[font=\tiny\sffamily, text=gray] at (\xpos, \ypos) {—};
+        \else
+            % Normal cell - determine color
+            \pgfmathparse{\score < 0.1 ? "att0" : (\score < 0.2 ? "att1" : (\score < 0.3 ? "att2" : (\score < 0.5 ? "att3" : "att4")))}
+            \edef\cellcolor{\pgfmathresult}
+
+            % Draw cell
+            \fill[\cellcolor] ({\xpos - 0.35}, {\ypos - 0.35}) rectangle ({\xpos + 0.35}, {\ypos + 0.35});
+            \draw[gray, thin] ({\xpos - 0.35}, {\ypos - 0.35}) rectangle ({\xpos + 0.35}, {\ypos + 0.35});
+
+            % Add score text
+            \pgfmathparse{\score >= 0.3 ? "white" : "black"}
+            \edef\textcolor{\pgfmathresult}
+            \node[font=\tiny\sffamily, text=\textcolor] at (\xpos, \ypos) {\pgfmathprintnumber[fixed, precision=2]{\score}};
+        \fi
+    }
+}
+
+% Axis labels
+\node[font=\small\sffamily, anchor=east, text=gray] at (0.4, 0.0) {Query →};
+\node[font=\small\sffamily, text=gray, rotate=90] at (5.9, 4.2) {← Key};
+
+% Color bar legend
+\node[font=\small\sffamily, text=gray] at (3.5, -1.2) {Attention score};
+
+% Draw mini color gradient
+\foreach \x in {0,...,20} {
+    \pgfmathsetmacro{\val}{\x / 20}
+    \pgfmathparse{\val < 0.1 ? "att0" : (\val < 0.2 ? "att1" : (\val < 0.3 ? "att2" : (\val < 0.5 ? "att3" : "att4")))}
+    \edef\gradcolor{\pgfmathresult}
+    \fill[\gradcolor] ({2.2 + \x * 0.13}, -1.6) rectangle ({2.2 + (\x + 1) * 0.13}, -1.4);
+}
+\draw[gray] (2.2, -1.6) rectangle (4.8, -1.4);
+\node[font=\scriptsize\sffamily, text=gray, anchor=north] at (2.2, -1.65) {0.0};
+\node[font=\scriptsize\sffamily, text=gray, anchor=north] at (4.8, -1.65) {1.0};
+
+% Masked indicator
+\node[font=\scriptsize\sffamily, text=gray] at (6.5, -1.5) {— = masked (future)};
+
+\end{tikzpicture}
+\end{document}

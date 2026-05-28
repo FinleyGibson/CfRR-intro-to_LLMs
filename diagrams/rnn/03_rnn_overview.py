@@ -207,9 +207,9 @@ for src_cx, dst_cx in zip(input_xs, COL_XS):
 for ch, cx in zip(SEQ_CHARS, COL_XS):
     draw_onehot(ax, cx, Y_OH, ch)
 
-# ── straight arrows: one-hot → RNN cells ──────────────────────────────────────
+# ── straight arrows: one-hot → RNN cells ──────────────────────────────────
 for cx in COL_XS:
-    arrow(ax, cx, Y_OH - 0.38, cx, Y_RNN + RNN_H / 2 + 0.05)
+    arrow(ax, cx, Y_OH - 0.38, cx, Y_RNN + RNN_H / 2 + 0.05, color="#CCCCCC", lw=1.3)
 
 # ── h0 (initial hidden state) ─────────────────────────────────────────────────
 rbox(ax, H0_X, Y_RNN, 0.72, 0.52, fc=C_H0, lw=1.4)

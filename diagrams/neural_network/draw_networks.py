@@ -1,8 +1,10 @@
-"""draw_networks.py — generate three neural-network architecture diagrams.
+"""draw_networks.py — generate neural-network architecture diagrams.
 
-Diagram 1 – simple:  2 inputs, 2 hidden layers (3 nodes), 2 outputs
-Diagram 2 – deep:    2 inputs, 5 hidden layers (3 nodes), 2 outputs
-Diagram 3 – wide:    4 inputs, 5 hidden layers (5 nodes), 2 outputs
+Diagram 0 – simple:      2 inputs, 2 hidden layers (3 nodes), 2 outputs (no weight labels)
+Diagram 1 – simple:      2 inputs, 2 hidden layers (3 nodes), 2 outputs (with weight labels)
+Diagram 2 – deep:        2 inputs, 5 hidden layers (3 nodes), 2 outputs
+Diagram 3 – wide & deep: 4 inputs, 5 hidden layers (5 nodes), 2 outputs
+Diagram 4 – deep & wide: 2 inputs, 5 hidden layers (5 nodes), 2 outputs
 
 Colours are read from config.json in the same directory.
 Output PNGs are written to the same directory.
@@ -197,6 +199,7 @@ def main():
         ([2, 3, 3, 2], "Simple Network", "diagram_1_simple.png", True),
         ([2, 3, 3, 3, 3, 3, 2], "Deep Network", "diagram_2_deep.png", False),
         ([4, 5, 5, 5, 5, 5, 2], "Wide & Deep Network", "diagram_3_wide_deep.png", False),
+        ([2, 5, 5, 5, 5, 5, 2], "Deep & Wide Network", "diagram_4_deep_wide.png", False),
     ]
 
     print("Generating diagrams …")
